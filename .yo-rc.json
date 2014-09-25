@@ -1,0 +1,11 @@
+{
+  "generator-angulpify": {
+    "projectName": "mml-net",
+    "coffee": false,
+    "jade": true,
+    "sass": false,
+    "bootstrap": false,
+    "uiBootstrap": false,
+    "uiRouter": false
+  }
+}
