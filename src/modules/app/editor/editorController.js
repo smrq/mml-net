@@ -3,14 +3,16 @@
 var _ = require('lodash');
 
 /*@ngInject*/
-function EditorController($scope, mmlOptimizerService) {
+function EditorController($scope, mmlDifficultyService, mmlOptimizerService) {
 	var self = this;
 
 	self.$scope = $scope;
+	self.mmlDifficultyService = mmlDifficultyService;
 	self.mmlOptimizerService = mmlOptimizerService;
 
 	$scope.mml = 'c8d8d8f8';
 	$scope.optimizedMml = '';
+	$scope.optimizedRank = '';
 	$scope.optimizing = false;
 	$scope.infmt = 'aa';
 	$scope.outfmt = 'aa';
@@ -19,6 +21,7 @@ function EditorController($scope, mmlOptimizerService) {
 	$scope.selectOutputFormat = self.selectOutputFormat.bind(self);
 
 	$scope.$watchGroup(['mml', 'infmt', 'outfmt'], self.optimize.bind(self));
+	$scope.$watchGroup(['optimizedMml', 'outfmt'], self.calculateRank.bind(self));
 }
 
 EditorController.prototype.selectInputFormat = function selectInputFormat(format) {
@@ -40,6 +43,12 @@ EditorController.prototype.optimize = function optimize() {
 		self.$scope.optimizedMml = mml;
 		self.$scope.optimizing = false;
 	});
+};
+
+EditorController.prototype.calculateRank = function calculateRank() {
+	this.$scope.optimizedRank = this.mmlDifficultyService.getDifficultyRank(
+		this.$scope.optimizedMml,
+		this.$scope.outfmt);
 };
 
 module.exports = EditorController;
