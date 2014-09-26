@@ -1,5 +1,23 @@
-.input
-	textarea(ng-model='mml', spellcheck='false')
-.output
-	textarea(readonly) {{optimizedMml}}
-.character-count {{optimizedMml.length}} characters
+.editor.row
+	.col-md-6.input
+		h2 Input
+		.btn-group(dropdown)
+			button.btn.dropdown-toggle(type='button')
+				| Format: {{infmt}}&nbsp;
+				span.caret
+			ul.dropdown-menu(role='menu')
+				li: a(href='javascript:void(0);' ng-click='selectInputFormat("aa")') ArcheAge
+				li: a(href='javascript:void(0);' ng-click='selectInputFormat("mabi")') Mabinogi
+		textarea(ng-model='mml', spellcheck='false')
+		.character-count {{mml.length}} characters
+	.col-md-6.output
+		h2 Optimized
+		.btn-group(dropdown)
+			button.btn.dropdown-toggle(type='button')
+				| Format: {{outfmt}}&nbsp;
+				span.caret
+			ul.dropdown-menu(role='menu')
+				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("aa")') ArcheAge
+				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("mabi")') Mabinogi
+		textarea(readonly) {{optimizedMml}}
+		.character-count {{optimizedMml.length}} characters

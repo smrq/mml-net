@@ -2,8 +2,8 @@
   "name": "mml-net",
   "private": true,
   "dependencies": {
-    "angular": "~1.2.21",
-    "angular-route": "~1.2.21",
+    "angular": "1.3.0-rc.3",
+    "angular-route": "1.3.0-rc.3",
     "bootstrap": "~3.2.0",
     "angular-bootstrap": "~0.11.0"
   }

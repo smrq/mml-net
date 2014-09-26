@@ -7,7 +7,7 @@ function MmlOptimizerService($q) {
 	this.$q = $q;
 }
 
-MmlOptimizerService.prototype.optimize = function (mml) {
+MmlOptimizerService.prototype.optimize = function (mml, options) {
 	var self = this;
 
 	var deferred = self.$q.defer();
@@ -15,7 +15,7 @@ MmlOptimizerService.prototype.optimize = function (mml) {
 	worker.addEventListener('message', function (e) {
 		deferred.resolve(e.data);
 	});
-	worker.postMessage(mml);
+	worker.postMessage({mml: mml, options: options});
 	return deferred.promise;
 };
 
