@@ -19,5 +19,5 @@
 			ul.dropdown-menu(role='menu')
 				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("aa")') ArcheAge
 				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("mabi")') Mabinogi
-		textarea(readonly) {{optimizedMml}}
+		textarea(readonly select-on-click) {{optimizedMml}}
 		.character-count {{optimizedMml.length}} characters
