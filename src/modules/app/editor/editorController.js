@@ -10,7 +10,7 @@ function EditorController($scope, mmlDifficultyService, mmlOptimizerService) {
 	self.mmlDifficultyService = mmlDifficultyService;
 	self.mmlOptimizerService = mmlOptimizerService;
 
-	$scope.mml = 'c8d8d8f8';
+	$scope.mml = 'L8cdef,cdef,cdef';
 	$scope.optimizedMml = '';
 	$scope.optimizedRank = '';
 	$scope.optimizing = false;
