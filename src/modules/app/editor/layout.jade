@@ -8,6 +8,9 @@
 			ul.dropdown-menu(role='menu')
 				li: a(href='javascript:void(0);' ng-click='selectInputFormat("aa")') ArcheAge
 				li: a(href='javascript:void(0);' ng-click='selectInputFormat("mabi")') Mabinogi
+		span
+			| Transpose: 
+			input(type='number' ng-model='transpose')
 		textarea(ng-model='mml', spellcheck='false')
 		.character-count {{mml.length}} characters
 	.col-md-6.output
