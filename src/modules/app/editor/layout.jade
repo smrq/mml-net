@@ -3,11 +3,11 @@
 		h2 Input
 		.btn-group(dropdown)
 			button.btn.btn-default.dropdown-toggle(type='button')
-				| Format: {{infmt}}&nbsp;
+				| Format: {{infmt | mmlFormat}}&nbsp;
 				span.caret
 			ul.dropdown-menu(role='menu')
-				li: a(href='javascript:void(0);' ng-click='selectInputFormat("aa")') ArcheAge
-				li: a(href='javascript:void(0);' ng-click='selectInputFormat("mabi")') Mabinogi
+				li: a(href='javascript:void(0);' ng-click='selectInputFormat("aa")') {{'aa' | mmlFormat}}
+				li: a(href='javascript:void(0);' ng-click='selectInputFormat("mabi")') {{'mabi' | mmlFormat}}
 		span
 			| Transpose: 
 			input(type='number' ng-model='transpose')
@@ -17,10 +17,10 @@
 		h2 Optimized
 		.btn-group(dropdown)
 			button.btn.btn-default.dropdown-toggle(type='button')
-				| Format: {{outfmt}}&nbsp;
+				| Format: {{outfmt | mmlFormat}}&nbsp;
 				span.caret
 			ul.dropdown-menu(role='menu')
-				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("aa")') ArcheAge
-				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("mabi")') Mabinogi
+				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("aa")') {{'aa' | mmlFormat}}
+				li: a(href='javascript:void(0);' ng-click='selectOutputFormat("mabi")') {{'mabi' | mmlFormat}}
 		textarea(readonly select-on-click) {{optimizedMml}}
 		.character-count {{optimizedMml.length}} characters ({{optimizedRank}})

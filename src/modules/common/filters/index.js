@@ -1,3 +1,4 @@
 'use strict';
 
-module.exports = angular.module('mml-net.common.filters', []);
+module.exports = angular.module('mml-net.common.filters', [])
+	.filter('mmlFormat', require('./mmlFormat'));
