@@ -4,7 +4,7 @@ var opt = require('mml-optimizer');
 
 module.exports = function (self) {
 	self.addEventListener('message', function (e) {
-		var optimized = opt(e.data.mml, e.data.options);
+		var optimized = opt.generate(e.data.tokens, e.data.options);
 		self.postMessage(optimized);
 		self.close();
 	});

@@ -4,29 +4,30 @@ var _ = require('lodash');
 
 /*@ngInject*/
 function EditorController($scope, mmlDifficultyService, mmlOptimizerService) {
-	var self = this;
-
-	self.$scope = $scope;
-	self.mmlDifficultyService = mmlDifficultyService;
-	self.mmlOptimizerService = mmlOptimizerService;
+	this.$scope = $scope;
+	this.mmlDifficultyService = mmlDifficultyService;
+	this.mmlOptimizerService = mmlOptimizerService;
 
 	$scope.mml = 'L8cdef,cdef,cdef';
+	$scope.tokens = [];
 	$scope.optimizedMml = '';
 	$scope.optimizedRank = '';
-	$scope.optimizing = false;
 	$scope.infmt = 'aa';
 	$scope.outfmt = 'aa';
 	$scope.transpose = 0;
 
-	$scope.selectInputFormat = self.selectInputFormat.bind(self);
-	$scope.selectOutputFormat = self.selectOutputFormat.bind(self);
+	$scope.selectInputFormat = this.selectInputFormat.bind(this);
+	$scope.selectOutputFormat = this.selectOutputFormat.bind(this);
 
 	$scope.$watchGroup(
 		['mml', 'infmt', 'outfmt', 'transpose'],
-		self.optimize.bind(self));
+		this.parse.bind(this));
+	$scope.$watchGroup(
+		['tokens', 'outfmt', 'transpose'],
+		this.generate.bind(this));
 	$scope.$watchGroup(
 		['optimizedMml', 'outfmt'],
-		self.calculateRank.bind(self));
+		this.calculateRank.bind(this));
 }
 
 EditorController.prototype.selectInputFormat = function selectInputFormat(format) {
@@ -37,17 +38,27 @@ EditorController.prototype.selectOutputFormat = function selectInputFormat(forma
 	this.$scope.outfmt = format;
 };
 
-EditorController.prototype.optimize = function optimize() {
-	var self = this;
+EditorController.prototype.optimizerOptions = function optimizerOptions() {
+	return {
+		input: this.$scope.infmt,
+		output: this.$scope.outfmt,
+		transpose: this.$scope.transpose
+	};
+};
 
-	self.$scope.optimizing = true;
-	self.mmlOptimizerService.optimize(self.$scope.mml, {
-		input: self.$scope.infmt,
-		output: self.$scope.outfmt,
-		transpose: self.$scope.transpose
-	}).then(function (mml) {
-		self.$scope.optimizedMml = mml;
-		self.$scope.optimizing = false;
+EditorController.prototype.parse = function parse() {
+	this.$scope.tokens = this.mmlOptimizerService.parse(
+		this.$scope.mml,
+		this.optimizerOptions());
+};
+
+EditorController.prototype.generate = function generate() {
+	var self = this;
+	self.mmlOptimizerService.generate(
+		self.$scope.tokens,
+		self.optimizerOptions())
+	.then(function (optimized) {
+		self.$scope.optimizedMml = optimized;
 	});
 };
 
