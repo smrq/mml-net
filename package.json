@@ -15,7 +15,8 @@
   "browser": {
     "angular": "./bower_components/angular/angular.min.js",
     "angular-bootstrap": "./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
-    "angular-route": "./bower_components/angular-route/angular-route.min.js"
+    "angular-route": "./bower_components/angular-route/angular-route.min.js",
+    "d3": "./bower_components/d3/d3.min.js"
   },
   "browserify-shim": {},
   "dependencies": {

@@ -1,7 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
-
 /*@ngInject*/
 function EditorController($scope, mmlDifficultyService, mmlOptimizerService) {
 	this.$scope = $scope;

@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = angular.module('mml-net.common.services', [])
+module.exports = angular.module('mmlNet.common.services', [])
 	.service('mmlDifficultyService', require('./mmlDifficultyService'))
 	.service('mmlOptimizerService', require('./mmlOptimizerService'));

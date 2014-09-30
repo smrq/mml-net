@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = angular.module('mml-net.editor', [])
+module.exports = angular.module('mmlNet.editor', [])
 	.config(function ($routeProvider) {
 		$routeProvider.when('/editor', {
 			templateUrl: 'app/editor/layout.html',
