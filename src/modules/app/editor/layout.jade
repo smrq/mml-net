@@ -2,7 +2,7 @@
 	.col-md-6.input
 		h2 Input
 		.form.row
-			.form-group.col-xs-6.col-sm-3
+			.form-group.col-xs-6.col-sm-4
 				label.control-label Input format
 				.btn-group-justified: .btn-group(dropdown)
 					button.btn.btn-default.dropdown-toggle(type='button')
@@ -11,7 +11,7 @@
 					ul.dropdown-menu(role='menu')
 						li: a(href='javascript:void(0);' ng-click='selectInputFormat("aa")') {{'aa' | mmlFormat}}
 						li: a(href='javascript:void(0);' ng-click='selectInputFormat("mabi")') {{'mabi' | mmlFormat}}
-			.form-group.col-xs-6.col-sm-3
+			.form-group.col-xs-6.col-sm-4
 				label.control-label Transpose
 				input.form-control(type='number' ng-model='transpose')
 		textarea.form-control(ng-model='mml', spellcheck='false')
@@ -19,7 +19,7 @@
 	.col-md-6.output
 		h2 Optimized
 		.form.row
-			.form-group.col-xs-6.col-sm-3
+			.form-group.col-xs-6.col-sm-4
 				label.control-label Output format
 				.btn-group-justified: .btn-group(dropdown)
 					button.btn.btn-default.dropdown-toggle(type='button')
