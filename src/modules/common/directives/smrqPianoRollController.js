@@ -5,28 +5,40 @@ function pianoRollController($scope) {
 
 pianoRollController.prototype.init = function(element) {
 	this.svg = d3.select(element)
-		.append('div')
+		.append('svg')
 		.style('width', '100%');
 };
 
 pianoRollController.prototype.render = function() {
-	var div = this.svg
-		.selectAll('div')
-		.data(this.$scope.tokens, function (d) { return tokenKey(d); });
-	div.enter()
-		.append('div')
-		.text(function (d) { return d.pitch + ' @ ' + d.time; })
-		.style('color', '#fff')
+	var notes = this.svg
+		.selectAll('g')
+		.data(
+			this.$scope.tokens.filter(function (token) { return token.type === 'note'; }),
+			function (d) { return JSON.stringify(d); });
+	notes.enter()
+		.append('g')
+		.call(notesEnter)
 		.transition(1000)
-		.style('color', '#000');
-	div.exit()
+		.call(notesEnterTransition);
+	notes.exit()
 		.transition(1000)
-		.style('color', '#fff')
+		.call(notesExitTransition)
 		.remove();
-};
 
-function tokenKey(token) {
-	return JSON.stringify(token);
-}
+	function notesEnter(g) {
+		g.attr('transform', function (d) { return 'translate(' + (d.time / 4) + ',' + (d.pitch) + ')'; })
+			.append('text')
+			.text(function (d) { return d.pitch + ' @ ' + d.time; });
+	}
+
+	function notesEnterTransition(g) {
+		g.styleTween('fill', function () { return d3.interpolate('#fff', '#000'); });
+	}
+
+	function notesExitTransition(g) {
+		g.select('text')
+			.style('fill', '#fff');
+	}
+};
 
 module.exports = pianoRollController;
