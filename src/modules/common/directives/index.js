@@ -1,4 +1,6 @@
 'use strict';
 
 module.exports = angular.module('mmlNet.common.directives', [])
-	.directive('selectOnClick', require('./selectOnClick'));
+	.directive('smrqPianoRoll', require('./smrqPianoRoll'))
+	.controller('smrqPianoRollController', require('./smrqPianoRollController'))
+	.directive('smrqSelectOnClick', require('./smrqSelectOnClick'));

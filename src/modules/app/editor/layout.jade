@@ -28,5 +28,5 @@
 					ul.dropdown-menu(role='menu')
 						li: a(href='javascript:void(0);' ng-click='selectOutputFormat("aa")') {{'aa' | mmlFormat}}
 						li: a(href='javascript:void(0);' ng-click='selectOutputFormat("mabi")') {{'mabi' | mmlFormat}}
-		textarea.form-control(readonly select-on-click) {{optimizedMml}}
+		textarea.form-control(readonly smrq-select-on-click) {{optimizedMml}}
 		.character-count {{optimizedMml.length}} characters ({{optimizedRank}})

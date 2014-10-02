@@ -7,5 +7,4 @@ module.exports = angular.module('mmlNet.pianoRoll', [])
 			controller: 'pianoRollController'
 		});
 	})
-	.controller('pianoRollController', require('./pianoRollController'))
-	.directive('pianoRoll', require('./pianoRoll'));
+	.controller('pianoRollController', require('./pianoRollController'));
