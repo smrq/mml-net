@@ -21,12 +21,12 @@ pianoRollController.prototype.render = function() {
 	var scaleX = d3.scale.linear()
 		.domain([0, d3.max(noteData, function (d) { return d.time + d.ticks; })])
 		.range([margin, this.element.offsetWidth - margin]);
-	var scaleY = d3.scale.linear()
-		.domain(d3.extent(noteData, function (d) { return d.pitch; }))
-		.range([this.element.offsetHeight - margin, margin]);
-	console.log(scaleX);
-	console.log(scaleY);
-
+	var scaleY = d3.scale.ordinal()
+		.domain(d3.range(
+			d3.min(noteData, function (d) { return d.pitch; }),
+			d3.max(noteData, function (d) { return d.pitch; }) + 1))
+		.rangeBands([this.element.offsetHeight - margin, margin]);
+	
 	var notes = this.svg
 		.selectAll('g')
 		.data(noteData, function (d) { return JSON.stringify(d); });
@@ -43,9 +43,13 @@ pianoRollController.prototype.render = function() {
 		.remove();
 
 	function notesEnter(g) {
-		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; })
-			.append('text')
-			.text(function (d) { return d.pitch; });
+		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; });
+		g.append('rect');
+		g.append('text')
+			.text(function (d) { return d.pitch; })
+			.style('dominant-baseline', 'central')
+			.style('font-size', scaleY.rangeBand())
+			.attr('fill', '#fff');
 	}
 
 	function notesEnterTransition(g) {
@@ -54,6 +58,12 @@ pianoRollController.prototype.render = function() {
 
 	function notesUpdateTransition(g) {
 		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; });
+		g.select('rect')
+			.attr('width', function (d) { return (scaleX(d.ticks) - scaleX(0)); })
+			.attr('height', scaleY.rangeBand());
+		g.select('text')
+			.attr('y', scaleY.rangeBand() / 2)
+			.style('font-size', scaleY.rangeBand());
 	}
 
 	function notesExitTransition(g) {
