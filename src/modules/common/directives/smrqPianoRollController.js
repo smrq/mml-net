@@ -1,5 +1,9 @@
-function pianoRollController($scope) {
+var d3 = require('d3');
+
+function pianoRollController($scope, midiNoteService) {
 	this.$scope = $scope;
+	this.midiNoteService = midiNoteService;
+
 	$scope.$watch('tokens', this.render.bind(this));
 }
 
@@ -12,7 +16,9 @@ pianoRollController.prototype.init = function(element) {
 };
 
 pianoRollController.prototype.render = function() {
-	var noteData = this.$scope.tokens.filter(function (token) {
+	var self = this;
+
+	var noteData = self.$scope.tokens.filter(function (token) {
 		return token.type === 'note';
 	});
 
@@ -20,14 +26,14 @@ pianoRollController.prototype.render = function() {
 
 	var scaleX = d3.scale.linear()
 		.domain([0, d3.max(noteData, function (d) { return d.time + d.ticks; })])
-		.range([margin, this.element.offsetWidth - margin]);
+		.range([margin, self.element.offsetWidth - margin]);
 	var scaleY = d3.scale.ordinal()
 		.domain(d3.range(
 			d3.min(noteData, function (d) { return d.pitch; }),
 			d3.max(noteData, function (d) { return d.pitch; }) + 1))
-		.rangeBands([this.element.offsetHeight - margin, margin]);
-	
-	var notes = this.svg
+		.rangeBands([self.element.offsetHeight - margin, margin]);
+
+	var notes = self.svg
 		.selectAll('g')
 		.data(noteData, function (d) { return JSON.stringify(d); });
 	notes.enter()
@@ -46,7 +52,7 @@ pianoRollController.prototype.render = function() {
 		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; });
 		g.append('rect');
 		g.append('text')
-			.text(function (d) { return d.pitch; })
+			.text(function (d) { return self.midiNoteService.getNoteName(d.pitch); })
 			.style('dominant-baseline', 'central')
 			.style('font-size', scaleY.rangeBand())
 			.attr('fill', '#fff');
@@ -59,7 +65,7 @@ pianoRollController.prototype.render = function() {
 	function notesUpdateTransition(g) {
 		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; });
 		g.select('rect')
-			.attr('width', function (d) { return (scaleX(d.ticks) - scaleX(0)); })
+			.attr('width', function (d) { return scaleX(d.time + d.ticks) - scaleX(d.time); })
 			.attr('height', scaleY.rangeBand());
 		g.select('text')
 			.attr('y', scaleY.rangeBand() / 2)
