@@ -69,6 +69,12 @@ pianoRollController.prototype.render = function() {
 		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; })
 			.classed('piano-roll-note', true);
 		g.append('rect')
+			.classed('piano-roll-note-border', true)
+			.attr('fill', varless.get('piano-roll-note-border-1'))
+			.attr('rx', varless.get('piano-roll-note-border-radius'))
+			.attr('ry', varless.get('piano-roll-note-border-radius'));
+		g.append('rect')
+			.classed('piano-roll-note-fill', true)
 			.attr('fill', varless.get('piano-roll-note-bg-1'))
 			.attr('rx', varless.get('piano-roll-note-border-radius'))
 			.attr('ry', varless.get('piano-roll-note-border-radius'));
@@ -84,14 +90,28 @@ pianoRollController.prototype.render = function() {
 	}
 
 	function notesUpdateTransition(g) {
+		var innerHeight = scaleY.rangeBand() -
+			parsePx(varless.get('piano-roll-note-border-top-width')) -
+			parsePx(varless.get('piano-roll-note-border-bottom-width'));
+		function innerWidth(d) {
+			return scaleX(d.time + d.ticks) - scaleX(d.time) -
+				parsePx(varless.get('piano-roll-note-border-left-width')) -
+				parsePx(varless.get('piano-roll-note-border-right-width'));
+		}
+
 		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; });
-		g.select('rect')
+		g.select('rect.piano-roll-note-border')
 			.attr('width', function (d) { return scaleX(d.time + d.ticks) - scaleX(d.time); })
 			.attr('height', scaleY.rangeBand());
+		g.select('rect.piano-roll-note-fill')
+			.attr('x', varless.get('piano-roll-note-border-left-width'))
+			.attr('y', varless.get('piano-roll-note-border-top-width'))
+			.attr('width', innerWidth)
+			.attr('height', innerHeight);
 		g.select('text')
-			.attr('x', 5)
-			.attr('y', scaleY.rangeBand() / 2)
-			.style('font-size', scaleY.rangeBand() * 0.75);
+			.attr('x', parsePx(varless.get('piano-roll-note-border-left-width')) + parsePx(varless.get('piano-roll-note-text-padding-left')))
+			.attr('y', parsePx(varless.get('piano-roll-note-border-top-width')) + innerHeight / 2)
+			.style('font-size', innerHeight * 0.75);
 	}
 
 	function notesExitTransition(g) {
@@ -99,5 +119,9 @@ pianoRollController.prototype.render = function() {
 			.style('fill', '#fff');
 	}
 };
+
+function parsePx(px) {
+	return parseInt(px, 10);
+}
 
 module.exports = pianoRollController;
