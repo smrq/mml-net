@@ -11,63 +11,95 @@ function pianoRollController($scope, midiNoteService) {
 
 pianoRollController.prototype.init = function(element) {
 	this.element = element;
+
+	this.margin = 50;
+	var width = this.element.offsetWidth - (2 * this.margin);
+	var height = this.element.offsetHeight - (2 * this.margin);
+
+	this.scaleX = d3.scale.linear();
+	this.scaleY = d3.scale.ordinal();
+
+	this.xAxis = d3.svg.axis()
+		.scale(this.scaleX)
+		.tickSize(height)
+		.tickFormat(formatTicks);
+	this.yAxis = d3.svg.axis()
+		.scale(this.scaleY)
+		.orient('left')
+		.tickFormat(this.midiNoteService.getNoteName);
+
 	this.svg = d3.select(element)
 		.append('svg')
-		.style('width', '100%')
-		.style('height', '100%');
-	/*
-	this.svg.append('linearGradient')
-		.attr('id', 'piano-roll-note-1')
-		.attr('x1', '0%')
-		.attr('y1', '0%')
-		.attr('x2', '100%')
-		.attr('y2', '0%')
-		.selectAll('stop')
-		.data([
-			{ offset: '0%', color: varless.get('piano-roll-note-1') },
-			{ offset: '100%', color: varless.get('piano-roll-note-1b') }
-		])
-		.enter()
-		.append('stop')
-		.attr('offset', function (d) { return d.offset; })
-		.attr('stop-color', function (d) { return d.color; });
-	*/
+		.attr('width', element.offsetWidth)
+		.attr('height', element.offsetHeight)
+		.append('g')
+		.attr('transform', 'translate(' + this.margin + ',' + this.margin + ')');
+	this.svg.append('clipPath')
+		.attr('id', 'clip')
+		.append('rect')
+		.attr('width', width)
+		.attr('height', height);
+	this.svg.append('g')
+		.attr('class', 'x axis');
+	this.svg.append('g')
+		.attr('class', 'y axis');
+	this.content = this.svg.append('g')
+		.attr('class', 'content')
+		.attr('clip-path', 'url(#clip)');
 };
 
 pianoRollController.prototype.render = function() {
 	var self = this;
 
+	var width = this.element.offsetWidth - (2 * this.margin);
+	var height = this.element.offsetHeight - (2 * this.margin);
+
 	var noteData = self.$scope.tokens.filter(function (token) {
 		return token.type === 'note';
 	});
 
-	var scaleX = d3.scale.linear()
+	self.scaleX
 		.domain([0, d3.max(noteData, function (d) { return d.time + d.ticks; })])
-		.range([0, self.element.offsetWidth]);
-	var scaleY = d3.scale.ordinal()
+		.range([0, width]);
+	self.scaleY
 		.domain(d3.range(
 			d3.min(noteData, function (d) { return d.pitch; }),
 			d3.max(noteData, function (d) { return d.pitch; }) + 1))
-		.rangeBands([self.element.offsetHeight, 0]);
+		.rangeBands([height, 0]);
 
-	var notes = self.svg
-		.selectAll('g')
+	self.svg
+		.select('clipPath')
+		.select('rect')
+		.attr('width', width)
+		.attr('height', height);
+
+	self.svg
+		.select('g.x.axis')
+		.transition()
+		.call(this.xAxis);
+	self.svg
+		.select('g.y.axis')
+		.transition()
+		.call(this.yAxis);
+
+	var notes = self.content
+		.selectAll('g.piano-roll-note')
 		.data(noteData, function (d) { return JSON.stringify(d); });
 	notes.enter()
 		.append('g')
+		.classed('piano-roll-note', true)
 		.call(notesEnter)
-		.transition(1000)
+		.transition()
 		.call(notesEnterTransition);
-	notes.transition(1000)
+	notes.transition()
 		.call(notesUpdateTransition);
 	notes.exit()
-		.transition(1000)
+		.transition()
 		.call(notesExitTransition)
 		.remove();
 
 	function notesEnter(g) {
-		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; })
-			.classed('piano-roll-note', true);
+		g.attr('transform', function (d) { return 'translate(' + self.scaleX(d.time) + ',' + self.scaleY(d.pitch) + ')'; });
 		g.append('rect')
 			.classed('piano-roll-note-border', true)
 			.attr('fill', varless.get('piano-roll-note-border-1'))
@@ -82,27 +114,27 @@ pianoRollController.prototype.render = function() {
 			.text(function (d) { return self.midiNoteService.getNoteName(d.pitch); })
 			.attr('fill', varless.get('piano-roll-note-color-1'))
 			.style('dominant-baseline', 'central')
-			.style('font-size', scaleY.rangeBand());
+			.style('font-size', self.scaleY.rangeBand());
 	}
 
 	function notesEnterTransition(g) {
-		g.styleTween('fill', function () { return d3.interpolate('#fff', '#000'); });
+		g.styleTween('opacity', function () { return d3.interpolate(1e-6, 1); });
 	}
 
 	function notesUpdateTransition(g) {
-		var innerHeight = scaleY.rangeBand() -
+		var innerHeight = self.scaleY.rangeBand() -
 			parsePx(varless.get('piano-roll-note-border-top-width')) -
 			parsePx(varless.get('piano-roll-note-border-bottom-width'));
 		function innerWidth(d) {
-			return scaleX(d.time + d.ticks) - scaleX(d.time) -
+			return self.scaleX(d.time + d.ticks) - self.scaleX(d.time) -
 				parsePx(varless.get('piano-roll-note-border-left-width')) -
 				parsePx(varless.get('piano-roll-note-border-right-width'));
 		}
 
-		g.attr('transform', function (d) { return 'translate(' + scaleX(d.time) + ',' + scaleY(d.pitch) + ')'; });
+		g.attr('transform', function (d) { return 'translate(' + self.scaleX(d.time) + ',' + self.scaleY(d.pitch) + ')'; });
 		g.select('rect.piano-roll-note-border')
-			.attr('width', function (d) { return scaleX(d.time + d.ticks) - scaleX(d.time); })
-			.attr('height', scaleY.rangeBand());
+			.attr('width', function (d) { return self.scaleX(d.time + d.ticks) - self.scaleX(d.time); })
+			.attr('height', self.scaleY.rangeBand());
 		g.select('rect.piano-roll-note-fill')
 			.attr('x', varless.get('piano-roll-note-border-left-width'))
 			.attr('y', varless.get('piano-roll-note-border-top-width'))
@@ -115,13 +147,20 @@ pianoRollController.prototype.render = function() {
 	}
 
 	function notesExitTransition(g) {
-		g.select('text')
-			.style('fill', '#fff');
+		g.style('opacity', 1e-6);
 	}
 };
 
 function parsePx(px) {
 	return parseInt(px, 10);
+}
+
+function formatTicks(ticks) {
+	// todo: time signatures?
+	var tpqn = 500; // todo: handle different tpqns
+	var measure = 1 + Math.floor(ticks / (tpqn * 4));
+	var beat = 1 + Math.floor((ticks % (tpqn * 4)) / tpqn);
+	return measure + '.' + beat;
 }
 
 module.exports = pianoRollController;
