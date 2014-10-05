@@ -1,6 +1,7 @@
 var d3 = require('d3');
 var varless = require('varless');
 
+/* @ngInject */
 function pianoRollController($scope, midiNoteService) {
 	this.$scope = $scope;
 	this.midiNoteService = midiNoteService;
